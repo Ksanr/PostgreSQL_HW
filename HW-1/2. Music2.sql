@@ -36,7 +36,7 @@ CREATE TABLE track (
     name VARCHAR(100) NOT NULL,
     duration INTEGER NOT NULL,
     album_id INTEGER REFERENCES album(album_id) NOT NULL,
-    CONSTRAINT chk_duration CHECK (duration BETWEEN 1 AND 50000)
+    CONSTRAINT chk_duration CHECK (duration BETWEEN 15 AND 1800)
 );
 
 CREATE TABLE collection (
