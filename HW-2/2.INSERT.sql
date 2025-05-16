@@ -67,3 +67,46 @@ values
 	(nextval('collection_track_collection_track_id_seq'::regclass), 2, 2),
 	(nextval('collection_track_collection_track_id_seq'::regclass), 3, 3),
 	(nextval('collection_track_collection_track_id_seq'::regclass), 4, 5);
+
+
+-- добавление записей в таблицу для проверки устраненных замечаний
+
+INSERT INTO public.perfomer
+(perfomer_id, "name")
+values
+	(nextval('perfomer_perfomer_id_seq'::regclass), 'Test_rev');
+
+INSERT INTO public.genre_perfomer
+(genre_perfomer_id, genre_id, perfomer_id)
+values
+	(nextval('genre_perfomer_genre_perfomer_id_seq'::regclass), 3, 5);
+
+INSERT INTO public.album
+(album_id, "name", release_date)
+values
+	(nextval('album_album_id_seq'::regclass), 'Test album #.01', '27/02/1984'),
+	(nextval('album_album_id_seq'::regclass), 'Test album #.02', '27/02/2019'),
+	(nextval('album_album_id_seq'::regclass), 'Test album #.03', '27/02/2020');
+	
+
+INSERT INTO public.perfomer_album
+(perfomer_album_id, perfomer_id, album_id)
+values
+	(nextval('perfomer_album_perfomer_album_id_seq'::regclass), 5, 5),
+	(nextval('perfomer_album_perfomer_album_id_seq'::regclass), 5, 6),
+	(nextval('perfomer_album_perfomer_album_id_seq'::regclass), 5, 7);
+
+
+INSERT INTO public.track
+(track_id, "name", duration, album_id)
+values
+	(nextval('track_track_id_seq'::regclass), 'my own', 100, 5),
+	(nextval('track_track_id_seq'::regclass), 'own my', 200, 6),
+	(nextval('track_track_id_seq'::regclass), 'my', 300, 7),
+	(nextval('track_track_id_seq'::regclass), 'oh my god', 400, 5),
+	(nextval('track_track_id_seq'::regclass), 'myself', 400, 6);
+
+
+
+
+

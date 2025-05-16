@@ -4,14 +4,15 @@ select name, duration from track
 where duration = (select MAX(duration) from track);
 
 -- Название треков, продолжительность которых не менее 3,5 минут.
+-- upd.1 исправлен оператор сравнения
 
 select name from track
-where duration > 3.5 * 60;
+where duration >= 3.5 * 60;
 
 -- Названия сборников, вышедших в период с 2018 по 2020 год включительно.
 
 select name from collection
-where release_date between '01/01/2018' and '31/12/2020';
+where release_date between '2018-01-01' and '2020-12-31';
 
 -- Исполнители, чьё имя состоит из одного слова.
 
@@ -20,9 +21,11 @@ where char_length(name) = char_length(replace(name, ' ', '')) ;
 
 
 -- Название треков, которые содержат слово «мой» или «my».
-select name from track
-where lower(name) like '%my%' or lower(name) like '%мой%';
+-- upd.1 не нравятся длинные запросы (предложенные в замечаниях - изучу на выходных),
+-- воспользовался регулярными выражениями, в которых можно указать начало/конец строки/слова
 
+select name from track 
+where name ~* '\mмой\M' or name ~* '\mmy\M';
 
 
 -- Количество исполнителей в каждом жанре.
@@ -30,12 +33,12 @@ select name, count(perfomer_id) from genre
 join genre_perfomer on genre.genre_id = genre_perfomer.genre_id
 group by name;
 
-
 -- Количество треков, вошедших в альбомы 2019–2020 годов.
-select name, count(track_id) from collection c
-join collection_track ct on c.collection_id  = ct.collection_id  
-where c.release_date between '01/01/2019' and '31/12/2020'
-group by name;
+-- upd.1 удалены лишние поля в выборке
+
+select count(*) from track t
+join album a on t.album_id = a.album_id   
+where a.release_date between '2019-01-01' and '2020-12-31';
 
 -- Средняя продолжительность треков по каждому альбому.
 select c.name, avg(duration) from collection c
@@ -45,10 +48,14 @@ group by c.name;
 
 
 -- Все исполнители, которые не выпустили альбомы в 2020 году.
+-- upd.1 исправлен запрос, теперь должен соответствовать заданию
+
 select p.name from perfomer p
-join perfomer_album pa on p.perfomer_id = pa.perfomer_id 
-join album a on pa.album_id = a.album_id
-where a.release_date not between '01/01/2020' and '31/12/2020';
+where p.perfomer_id not in(
+	select pa.perfomer_id from perfomer_album pa 
+	join album a on pa.album_id = a.album_id
+	where a.release_date between '2020-01-01' and '2020-12-31');
+
 
 -- Названия сборников, в которых присутствует конкретный исполнитель (выберите его сами).
 select c.name from collection c 
@@ -60,10 +67,11 @@ where p.name = 'Queen';
 
 
 -- Названия альбомов, в которых присутствуют исполнители более чем одного жанра.
+-- upd.1 Исправлено поле второй группировки
 select a.name from album a 
 join perfomer_album pa on a.album_id = pa.album_id
 join genre_perfomer gp on pa.perfomer_id = gp.perfomer_id
-group by a.name, gp.genre_id
+group by a.name, gp.perfomer_id 
 having count(gp.genre_id) > 1;
 
 -- Наименования треков, которые не входят в сборники.
